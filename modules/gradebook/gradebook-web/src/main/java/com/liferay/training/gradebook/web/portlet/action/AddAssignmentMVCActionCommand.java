@@ -66,7 +66,6 @@ public class AddAssignmentMVCActionCommand extends BaseMVCActionCommand {
 
         Date dueDate = ParamUtil.getDate(actionRequest, "dueDate", null);
         try {
-
             // Call the service to add a new assignment.
 
             _assignmentService.addAssignment(
@@ -79,7 +78,6 @@ public class AddAssignmentMVCActionCommand extends BaseMVCActionCommand {
             sendRedirect(actionRequest, actionResponse);
         }
         catch (AssignmentValidationException ave) {
-
             // Get error messages from the service layer.
 
             ave.getErrors().forEach(key -> SessionErrors.add(actionRequest, key));
@@ -91,14 +89,11 @@ public class AddAssignmentMVCActionCommand extends BaseMVCActionCommand {
 
         }
         catch (PortalException pe) {
-
             // Set error messages from the service layer.
 
             SessionErrors.add(actionRequest, "serviceErrorDetails", pe);
 
             pe.printStackTrace();
-
-
 
             actionResponse.setRenderParameter(
                     "mvcRenderCommandName", MVCCommandNames.EDIT_ASSIGNMENT);
