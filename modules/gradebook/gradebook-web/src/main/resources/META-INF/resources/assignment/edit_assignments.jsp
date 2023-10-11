@@ -4,6 +4,10 @@
 </liferay-ui:error>
 <liferay-ui:error key="assignmentTitleEmpty" message="error.assignment-title-empty" />
 <liferay-ui:error key="assignmentDescriptionEmpty" message="error.assignment-description-empty" />
+<liferay-ui:error key="assignmentTitleTooShort" message="error.title-too-short" />
+<liferay-ui:error key="assignmentTitleTooLong" message="error.title-too-long" />
+<liferay-ui:error key="assignmentDescriptionTooShort" message="error.description-too-short" />
+<liferay-ui:error key="assignmentDescriptionTooLong" message="error.description-too-long" />
 
 <%-- Generate add / edit action URL and set title. --%>
 

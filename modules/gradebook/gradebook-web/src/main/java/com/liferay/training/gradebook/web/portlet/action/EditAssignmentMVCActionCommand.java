@@ -1,6 +1,5 @@
 package com.liferay.training.gradebook.web.portlet.action;
 
-import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
@@ -8,7 +7,6 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
-import com.liferay.portal.kernel.util.DateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.training.gradebook.exception.AssignmentValidationException;
@@ -58,9 +56,8 @@ public class EditAssignmentMVCActionCommand extends BaseMVCActionCommand {
 
         long assignmentId = ParamUtil.getLong(actionRequest, "assignmentId");
 
-        String title = ParamUtil.getString(actionRequest, "title");
-
-        String description = ParamUtil.getString(actionRequest, "description", null);
+        Map<Locale, String> descriptionMap = LocalizationUtil.getLocalizationMap(
+                actionRequest, "description");
 
         Date dueDate = ParamUtil.getDate(actionRequest, "dueDate", null);
         try {
@@ -68,7 +65,7 @@ public class EditAssignmentMVCActionCommand extends BaseMVCActionCommand {
             // Call the service to update the assignment
 
             _assignmentService.updateAssignment(
-                    assignmentId, titleMap, description, dueDate, serviceContext);
+                    assignmentId, titleMap, descriptionMap, dueDate, serviceContext);
 
             // Set the success message.
 

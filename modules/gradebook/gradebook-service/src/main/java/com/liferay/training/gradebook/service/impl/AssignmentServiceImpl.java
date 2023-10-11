@@ -64,7 +64,7 @@ public class AssignmentServiceImpl extends AssignmentServiceBaseImpl {
 	 * Never reference this class directly. Always use <code>com.liferay.training.gradebook.service.AssignmentServiceUtil</code> to access the assignment remote service.
 	 */
 	public Assignment addAssignment(
-			long groupId, Map<Locale, String> titleMap, String description,
+			long groupId, Map<Locale, String> titleMap, Map<Locale, String> descriptionMap,
 			Date dueDate, ServiceContext serviceContext)
 			throws PortalException {
 
@@ -75,7 +75,7 @@ public class AssignmentServiceImpl extends AssignmentServiceBaseImpl {
 				ActionKeys.ADD_ENTRY);
 
 		return assignmentLocalService.addAssignment(
-				groupId, titleMap, description, dueDate, serviceContext);
+				groupId, titleMap, descriptionMap, dueDate, serviceContext);
 	}
 
 	public Assignment deleteAssignment(long assignmentId)
@@ -126,7 +126,7 @@ public class AssignmentServiceImpl extends AssignmentServiceBaseImpl {
 	}
 
 	public Assignment updateAssignment(
-			long assignmentId, Map<Locale, String> titleMap, String description,
+			long assignmentId, Map<Locale, String> titleMap, Map<Locale, String> descriptionMap,
 			Date dueDate, ServiceContext serviceContext)
 			throws PortalException {
 
@@ -136,7 +136,7 @@ public class AssignmentServiceImpl extends AssignmentServiceBaseImpl {
 				getPermissionChecker(), assignmentId, ActionKeys.UPDATE);
 
 		return assignmentLocalService.updateAssignment(
-				assignmentId, titleMap, description, dueDate, serviceContext);
+				assignmentId, titleMap, descriptionMap, dueDate, serviceContext);
 	}
 	@Reference(
 			policy = ReferencePolicy.DYNAMIC,

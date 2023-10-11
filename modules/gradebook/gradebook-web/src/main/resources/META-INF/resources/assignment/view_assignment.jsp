@@ -19,7 +19,7 @@
 			<dd>${dueDate}</dd>
 
 			<dt><liferay-ui:message key="description" /></dt>
-			<dd>${assignment.getDescription()}</dd>
+			<dd>${assignment.getDescription(locale)}</dd>
 		</dl>
 	</div>
 </div>

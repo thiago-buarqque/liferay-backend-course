@@ -1,8 +1,11 @@
 package com.liferay.training.gradebook.validator.util;
 
+import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
+import com.liferay.portal.kernel.util.HtmlUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.MapUtil;
-import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.training.gradebook.configuration.GradebookSystemServiceConfiguration;
 import com.liferay.training.gradebook.exception.AssignmentValidationException;
 import com.liferay.training.gradebook.validator.AssignmentValidator;
 
@@ -12,13 +15,24 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Modified;
 
 @Component(
+        configurationPid = "com.liferay.training.gradebook.configuration.GradebookSystemServiceConfiguration",
         immediate = true,
         service = AssignmentValidator.class
 )
 public class AssignmentValidatorImpl implements AssignmentValidator {
+
+
+    @Activate
+    @Modified
+    private void activate(Map<String, Object> properties) {
+        _moduleConfiguration = ConfigurableUtil.createConfigurable(
+                GradebookSystemServiceConfiguration.class, properties);
+    }
 
     /**
      * Validates assignment values and throws
@@ -26,17 +40,17 @@ public class AssignmentValidatorImpl implements AssignmentValidator {
      * valid.
      *
      * @param titleMap
-     * @param description
+     * @param descriptionMap
      * @param dueDate
-     * @throws AssignmentValidationExceptionException
+     * @throws AssignmentValidationException
      */
     public void validate(
-            Map<Locale, String> titleMap, String description, Date dueDate)
+            Map<Locale, String> titleMap, Map<Locale, String> descriptionMap, Date dueDate)
             throws AssignmentValidationException {
 
         List<String> errors = new ArrayList<>();
 
-        if (!isAssignmentValid(titleMap, description, dueDate, errors)) {
+        if (!isAssignmentValid(titleMap, descriptionMap, dueDate, errors)) {
             throw new AssignmentValidationException(errors);
         }
     }
@@ -46,7 +60,7 @@ public class AssignmentValidatorImpl implements AssignmentValidator {
      * assignment.
      *
      * @param titleMap
-     * @param description
+     * @param descriptionMap
      * @param dueDate
      * @param errors
      * @return boolean <code>true</code> if assignment is valid, otherwise
@@ -54,14 +68,14 @@ public class AssignmentValidatorImpl implements AssignmentValidator {
      */
 
     private boolean isAssignmentValid(
-            final Map<Locale, String> titleMap, final String description,
+            final Map<Locale, String> titleMap, final Map<Locale, String> descriptionMap,
             final Date dueDate, final List<String> errors) {
 
         boolean result = true;
 
         result &= isTitleValid(titleMap, errors);
         result &= isDueDateValid(dueDate, errors);
-        result &= isDescriptionValid(description, errors);
+        result &= isDescriptionValid(descriptionMap, errors);
 
         return result;
     }
@@ -70,25 +84,45 @@ public class AssignmentValidatorImpl implements AssignmentValidator {
      * Returns <code>true</code> if description is valid for an assignment. If
      * not valid, an error message is added to the errors list.
      *
-     * @param description
+     * @param descriptionMap
      * @param errors
      * @return boolean <code>true</code> if description is valid, otherwise
      *         <code>false</code>
      */
     private boolean isDescriptionValid(
-            final String description, final List<String> errors) {
+            final Map<Locale, String> descriptionMap, final List<String> errors) {
 
-        boolean result = true;
-
-        // Verify the description has something
-
-        if (description == "") {
+        // Verify the map has something
+        if (MapUtil.isEmpty(descriptionMap)) {
             errors.add("assignmentDescriptionEmpty");
-            result = false;
+            return false;
+        }
+        else {
+            // Get the default locale
+            Locale defaultLocale = LocaleUtil.getSiteDefault();
+            String descriptionHTML = descriptionMap.get(defaultLocale);
+
+            if ((Validator.isBlank(descriptionHTML))) {
+                errors.add("assignmentDescriptionEmpty");
+                return false;
+            }
+            // Strip HTML tags from text.
+            String descriptionText = HtmlUtil.stripHtml(descriptionHTML);
+            if (Validator.isBlank(descriptionText)) {
+                errors.add("assignmentDescriptionEmpty");
+                return false;
+            }
+            if (descriptionText.length() < _moduleConfiguration.descriptionMinLength()) {
+                errors.add("assignmentDescriptionTooShort");
+                return false;
+            }
+            else if (descriptionText.length() > _moduleConfiguration.descriptionMaxLength()) {
+                errors.add("assignmentDescriptionTooLong");
+                return false;
+            }
         }
 
-        return result;
-
+        return true;
     }
 
     /**
@@ -140,4 +174,6 @@ public class AssignmentValidatorImpl implements AssignmentValidator {
 
         return result;
     }
+
+    private volatile GradebookSystemServiceConfiguration _moduleConfiguration;
 }

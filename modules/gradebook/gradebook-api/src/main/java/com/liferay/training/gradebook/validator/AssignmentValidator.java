@@ -12,11 +12,11 @@ public interface AssignmentValidator {
      * Validates an Assignment
      *
      * @param titleMap
-     * @param description
+     * @param descriptionMap
      * @param dueDate
      * @throws AssignmentValidationException
      */
     public void validate(
-            Map<Locale, String> titleMap, String description, Date dueDate)
+            Map<Locale, String> titleMap, Map<Locale, String> descriptionMap, Date dueDate)
             throws AssignmentValidationException;
 }

@@ -62,12 +62,14 @@ import org.osgi.service.component.annotations.Reference;
 
 public class AssignmentLocalServiceImpl extends AssignmentLocalServiceBaseImpl {
 
-	public Assignment addAssignment(long groupId, Map<Locale, String> titleMap, String description,
-									Date dueDate, ServiceContext serviceContext) throws PortalException {
+	public Assignment addAssignment(
+			long groupId, Map<Locale, String> titleMap,
+			Map<Locale, String> descriptionMap, Date dueDate,
+			ServiceContext serviceContext) throws PortalException {
 
 		// Validate assignment parameters.
 
-		_assignmentValidator.validate(titleMap, description, dueDate);
+		_assignmentValidator.validate(titleMap, descriptionMap, dueDate);
 
 		// Get group and user.
 
@@ -88,7 +90,7 @@ public class AssignmentLocalServiceImpl extends AssignmentLocalServiceBaseImpl {
 		assignment.setCompanyId(group.getCompanyId());
 		assignment.setCreateDate(serviceContext.getCreateDate(new Date()));
 		assignment.setDueDate(dueDate);
-		assignment.setDescription(description);
+		assignment.setDescriptionMap(descriptionMap);
 		assignment.setGroupId(groupId);
 		assignment.setModifiedDate(serviceContext.getModifiedDate(new Date()));
 		assignment.setTitleMap(titleMap);
@@ -115,12 +117,15 @@ public class AssignmentLocalServiceImpl extends AssignmentLocalServiceBaseImpl {
 		return assignment;
 	}
 
-	public Assignment updateAssignment(long assignmentId, Map<Locale, String> titleMap,
-									   String description, Date dueDate, ServiceContext serviceContext) throws PortalException {
+	public Assignment updateAssignment(
+			long assignmentId, Map<Locale, String> titleMap,
+			Map<Locale, String> descriptionMap,
+			Date dueDate, ServiceContext serviceContext)
+		throws PortalException {
 
 		// Validate assignment parameters.
 
-		_assignmentValidator.validate(titleMap, description, dueDate);
+		_assignmentValidator.validate(titleMap, descriptionMap, dueDate);
 
 		// Get the Assignment by id.
 
@@ -131,7 +136,7 @@ public class AssignmentLocalServiceImpl extends AssignmentLocalServiceBaseImpl {
 		assignment.setModifiedDate(new Date());
 		assignment.setTitleMap(titleMap);
 		assignment.setDueDate(dueDate);
-		assignment.setDescription(description);
+		assignment.setDescriptionMap(descriptionMap);
 		assignment = super.updateAssignment(assignment);
 		// Update Asset resources.
 		updateAsset(assignment, serviceContext);
@@ -195,6 +200,7 @@ public class AssignmentLocalServiceImpl extends AssignmentLocalServiceBaseImpl {
 	private void updateAsset(
 			Assignment assignment, ServiceContext serviceContext)
 			throws PortalException {
+
 		assetEntryLocalService.updateEntry(
 				serviceContext.getUserId(), serviceContext.getScopeGroupId(),
 				assignment.getCreateDate(), assignment.getModifiedDate(),

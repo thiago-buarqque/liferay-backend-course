@@ -60,16 +60,15 @@ public class AddAssignmentMVCActionCommand extends BaseMVCActionCommand {
         Map<Locale, String> titleMap = LocalizationUtil.getLocalizationMap(
                 actionRequest, "title");
 
-        String title = ParamUtil.getString(actionRequest, "title");
-
-        String description = ParamUtil.getString(actionRequest, "description", null);
+        Map<Locale, String> descriptionMap = LocalizationUtil.getLocalizationMap(
+                actionRequest, "description");
 
         Date dueDate = ParamUtil.getDate(actionRequest, "dueDate", null);
         try {
             // Call the service to add a new assignment.
 
             _assignmentService.addAssignment(
-                    themeDisplay.getScopeGroupId(), titleMap, description, dueDate, serviceContext);
+                    themeDisplay.getScopeGroupId(), titleMap, descriptionMap, dueDate, serviceContext);
 
             // Set the success message.
 

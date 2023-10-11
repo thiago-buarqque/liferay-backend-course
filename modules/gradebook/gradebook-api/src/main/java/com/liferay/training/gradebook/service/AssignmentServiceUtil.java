@@ -42,12 +42,13 @@ public class AssignmentServiceUtil {
 	 */
 	public static Assignment addAssignment(
 			long groupId, Map<java.util.Locale, String> titleMap,
-			String description, java.util.Date dueDate,
+			Map<java.util.Locale, String> descriptionMap,
+			java.util.Date dueDate,
 			com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws PortalException {
 
 		return getService().addAssignment(
-			groupId, titleMap, description, dueDate, serviceContext);
+			groupId, titleMap, descriptionMap, dueDate, serviceContext);
 	}
 
 	public static Assignment deleteAssignment(long assignmentId)
@@ -91,12 +92,13 @@ public class AssignmentServiceUtil {
 
 	public static Assignment updateAssignment(
 			long assignmentId, Map<java.util.Locale, String> titleMap,
-			String description, java.util.Date dueDate,
+			Map<java.util.Locale, String> descriptionMap,
+			java.util.Date dueDate,
 			com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws PortalException {
 
 		return getService().updateAssignment(
-			assignmentId, titleMap, description, dueDate, serviceContext);
+			assignmentId, titleMap, descriptionMap, dueDate, serviceContext);
 	}
 
 	public static AssignmentService getService() {

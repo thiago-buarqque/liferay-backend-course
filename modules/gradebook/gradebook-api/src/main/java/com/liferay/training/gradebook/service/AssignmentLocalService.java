@@ -81,8 +81,9 @@ public interface AssignmentLocalService
 	public Assignment addAssignment(Assignment assignment);
 
 	public Assignment addAssignment(
-			long groupId, Map<Locale, String> titleMap, String description,
-			Date dueDate, ServiceContext serviceContext)
+			long groupId, Map<Locale, String> titleMap,
+			Map<Locale, String> descriptionMap, Date dueDate,
+			ServiceContext serviceContext)
 		throws PortalException;
 
 	/**
@@ -299,8 +300,9 @@ public interface AssignmentLocalService
 	public Assignment updateAssignment(Assignment assignment);
 
 	public Assignment updateAssignment(
-			long assignmentId, Map<Locale, String> titleMap, String description,
-			Date dueDate, ServiceContext serviceContext)
+			long assignmentId, Map<Locale, String> titleMap,
+			Map<Locale, String> descriptionMap, Date dueDate,
+			ServiceContext serviceContext)
 		throws PortalException;
 
 }

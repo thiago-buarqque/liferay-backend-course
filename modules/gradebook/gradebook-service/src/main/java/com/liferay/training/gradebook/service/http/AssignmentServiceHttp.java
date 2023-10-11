@@ -53,7 +53,8 @@ public class AssignmentServiceHttp {
 	public static com.liferay.training.gradebook.model.Assignment addAssignment(
 			HttpPrincipal httpPrincipal, long groupId,
 			java.util.Map<java.util.Locale, String> titleMap,
-			String description, java.util.Date dueDate,
+			java.util.Map<java.util.Locale, String> descriptionMap,
+			java.util.Date dueDate,
 			com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
@@ -63,7 +64,7 @@ public class AssignmentServiceHttp {
 				_addAssignmentParameterTypes0);
 
 			MethodHandler methodHandler = new MethodHandler(
-				methodKey, groupId, titleMap, description, dueDate,
+				methodKey, groupId, titleMap, descriptionMap, dueDate,
 				serviceContext);
 
 			Object returnObj = null;
@@ -282,7 +283,8 @@ public class AssignmentServiceHttp {
 			updateAssignment(
 				HttpPrincipal httpPrincipal, long assignmentId,
 				java.util.Map<java.util.Locale, String> titleMap,
-				String description, java.util.Date dueDate,
+				java.util.Map<java.util.Locale, String> descriptionMap,
+				java.util.Date dueDate,
 				com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
@@ -292,7 +294,7 @@ public class AssignmentServiceHttp {
 				_updateAssignmentParameterTypes6);
 
 			MethodHandler methodHandler = new MethodHandler(
-				methodKey, assignmentId, titleMap, description, dueDate,
+				methodKey, assignmentId, titleMap, descriptionMap, dueDate,
 				serviceContext);
 
 			Object returnObj = null;
@@ -328,7 +330,8 @@ public class AssignmentServiceHttp {
 
 	private static final Class<?>[] _addAssignmentParameterTypes0 =
 		new Class[] {
-			long.class, java.util.Map.class, String.class, java.util.Date.class,
+			long.class, java.util.Map.class, java.util.Map.class,
+			java.util.Date.class,
 			com.liferay.portal.kernel.service.ServiceContext.class
 		};
 	private static final Class<?>[] _deleteAssignmentParameterTypes1 =
@@ -348,7 +351,8 @@ public class AssignmentServiceHttp {
 		};
 	private static final Class<?>[] _updateAssignmentParameterTypes6 =
 		new Class[] {
-			long.class, java.util.Map.class, String.class, java.util.Date.class,
+			long.class, java.util.Map.class, java.util.Map.class,
+			java.util.Date.class,
 			com.liferay.portal.kernel.service.ServiceContext.class
 		};
 
