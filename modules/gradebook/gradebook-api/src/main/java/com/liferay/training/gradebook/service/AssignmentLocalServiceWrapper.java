@@ -320,10 +320,11 @@ public class AssignmentLocalServiceWrapper
 			long groupId, String keywords, int start, int end,
 			com.liferay.portal.kernel.util.OrderByComparator
 				<com.liferay.training.gradebook.model.Assignment>
-					orderByComparator) {
+					orderByComparator,
+			int status) {
 
 		return _assignmentLocalService.getAssignmentsByKeywords(
-			groupId, keywords, start, end, orderByComparator);
+			groupId, keywords, start, end, orderByComparator, status);
 	}
 
 	/**
@@ -337,9 +338,11 @@ public class AssignmentLocalServiceWrapper
 	}
 
 	@Override
-	public long getAssignmentsCountByKeywords(long groupId, String keywords) {
+	public long getAssignmentsCountByKeywords(
+		long groupId, String keywords, int status) {
+
 		return _assignmentLocalService.getAssignmentsCountByKeywords(
-			groupId, keywords);
+			groupId, keywords, status);
 	}
 
 	@Override
@@ -397,6 +400,17 @@ public class AssignmentLocalServiceWrapper
 
 		return _assignmentLocalService.updateAssignment(
 			assignmentId, titleMap, descriptionMap, dueDate, serviceContext);
+	}
+
+	@Override
+	public com.liferay.training.gradebook.model.Assignment updateStatus(
+			long userId, long assignmentId, int status,
+			com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			   com.liferay.portal.kernel.exception.SystemException {
+
+		return _assignmentLocalService.updateStatus(
+			userId, assignmentId, status, serviceContext);
 	}
 
 	@Override

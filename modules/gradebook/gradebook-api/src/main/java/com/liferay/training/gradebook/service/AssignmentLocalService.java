@@ -255,7 +255,7 @@ public interface AssignmentLocalService
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<Assignment> getAssignmentsByKeywords(
 		long groupId, String keywords, int start, int end,
-		OrderByComparator<Assignment> orderByComparator);
+		OrderByComparator<Assignment> orderByComparator, int status);
 
 	/**
 	 * Returns the number of assignments.
@@ -266,7 +266,8 @@ public interface AssignmentLocalService
 	public int getAssignmentsCount();
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public long getAssignmentsCountByKeywords(long groupId, String keywords);
+	public long getAssignmentsCountByKeywords(
+		long groupId, String keywords, int status);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery();
@@ -304,5 +305,10 @@ public interface AssignmentLocalService
 			Map<Locale, String> descriptionMap, Date dueDate,
 			ServiceContext serviceContext)
 		throws PortalException;
+
+	public Assignment updateStatus(
+			long userId, long assignmentId, int status,
+			ServiceContext serviceContext)
+		throws PortalException, SystemException;
 
 }

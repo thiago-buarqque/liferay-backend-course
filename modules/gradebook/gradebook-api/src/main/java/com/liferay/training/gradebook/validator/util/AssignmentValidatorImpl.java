@@ -100,14 +100,14 @@ public class AssignmentValidatorImpl implements AssignmentValidator {
         else {
             // Get the default locale
             Locale defaultLocale = LocaleUtil.getSiteDefault();
-            String descriptionHTML = descriptionMap.get(defaultLocale);
+            String description = descriptionMap.get(defaultLocale);
 
-            if ((Validator.isBlank(descriptionHTML))) {
+            if ((Validator.isBlank(description))) {
                 errors.add("assignmentDescriptionEmpty");
                 return false;
             }
             // Strip HTML tags from text.
-            String descriptionText = HtmlUtil.stripHtml(descriptionHTML);
+            String descriptionText = HtmlUtil.stripHtml(description);
             if (Validator.isBlank(descriptionText)) {
                 errors.add("assignmentDescriptionEmpty");
                 return false;
@@ -163,16 +163,37 @@ public class AssignmentValidatorImpl implements AssignmentValidator {
     private boolean isTitleValid(
             final Map<Locale, String> titleMap, final List<String> errors) {
 
-        boolean result = true;
-
-        // Verify the Title has something
-
+        // Verify the map has something
         if (MapUtil.isEmpty(titleMap)) {
             errors.add("assignmentTitleEmpty");
-            result = false;
+            return false;
+        }
+        else {
+            // Get the default locale
+            Locale defaultLocale = LocaleUtil.getSiteDefault();
+            String title = titleMap.get(defaultLocale);
+
+            if ((Validator.isBlank(title))) {
+                errors.add("assignmentTitleEmpty");
+                return false;
+            }
+            // Strip HTML tags from text.
+            String descriptionText = HtmlUtil.stripHtml(title);
+            if (Validator.isBlank(descriptionText)) {
+                errors.add("assignmentTitleEmpty");
+                return false;
+            }
+            if (descriptionText.length() < _moduleConfiguration.titleMinLength()) {
+                errors.add("assignmentTitleTooShort");
+                return false;
+            }
+            else if (descriptionText.length() > _moduleConfiguration.titleMaxLength()) {
+                errors.add("assignmentTitleTooLong");
+                return false;
+            }
         }
 
-        return result;
+        return true;
     }
 
     private volatile GradebookSystemServiceConfiguration _moduleConfiguration;

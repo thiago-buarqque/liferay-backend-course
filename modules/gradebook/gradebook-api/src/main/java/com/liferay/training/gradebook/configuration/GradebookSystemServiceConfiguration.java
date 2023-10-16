@@ -36,4 +36,19 @@ public interface GradebookSystemServiceConfiguration {
             required = false
     )
     public int descriptionMaxLength();
+
+    @Meta.AD(
+            deflt = "3",
+            description = "title-min-length-description",
+            name = "title-min-length-name",
+            required = false
+    )
+    public int titleMinLength();
+    @Meta.AD(
+            deflt = "200",
+            description = "title-max-length-description",
+            name = "title-max-length-name",
+            required = false
+    )
+    public int titleMaxLength();
 }

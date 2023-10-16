@@ -215,7 +215,8 @@ public class AssignmentServiceHttp {
 				int start, int end,
 				com.liferay.portal.kernel.util.OrderByComparator
 					<com.liferay.training.gradebook.model.Assignment>
-						orderByComparator) {
+						orderByComparator,
+				int status) {
 
 		try {
 			MethodKey methodKey = new MethodKey(
@@ -223,7 +224,8 @@ public class AssignmentServiceHttp {
 				_getAssignmentsByKeywordsParameterTypes4);
 
 			MethodHandler methodHandler = new MethodHandler(
-				methodKey, groupId, keywords, start, end, orderByComparator);
+				methodKey, groupId, keywords, start, end, orderByComparator,
+				status);
 
 			Object returnObj = null;
 
@@ -248,7 +250,8 @@ public class AssignmentServiceHttp {
 	}
 
 	public static long getAssignmentsCountByKeywords(
-		HttpPrincipal httpPrincipal, long groupId, String keywords) {
+		HttpPrincipal httpPrincipal, long groupId, String keywords,
+		int status) {
 
 		try {
 			MethodKey methodKey = new MethodKey(
@@ -256,7 +259,7 @@ public class AssignmentServiceHttp {
 				_getAssignmentsCountByKeywordsParameterTypes5);
 
 			MethodHandler methodHandler = new MethodHandler(
-				methodKey, groupId, keywords);
+				methodKey, groupId, keywords, status);
 
 			Object returnObj = null;
 
@@ -343,11 +346,11 @@ public class AssignmentServiceHttp {
 	private static final Class<?>[] _getAssignmentsByKeywordsParameterTypes4 =
 		new Class[] {
 			long.class, String.class, int.class, int.class,
-			com.liferay.portal.kernel.util.OrderByComparator.class
+			com.liferay.portal.kernel.util.OrderByComparator.class, int.class
 		};
 	private static final Class<?>[]
 		_getAssignmentsCountByKeywordsParameterTypes5 = new Class[] {
-			long.class, String.class
+			long.class, String.class, int.class
 		};
 	private static final Class<?>[] _updateAssignmentParameterTypes6 =
 		new Class[] {

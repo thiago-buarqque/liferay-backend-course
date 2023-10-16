@@ -41,13 +41,22 @@
 				</aui:a>
 			</h4>
 
+			<h5 class="text-default">
+             <aui:workflow-status
+             markupView="lexicon"
+             showIcon="<%= true %>"
+             showLabel="<%= false %>"
+             status="${entry.status}"
+             />
+             </h5>
+
 		</liferay-ui:search-container-column-text>
 
 		<liferay-ui:search-container-column-jsp
 			path="/assignment/entry_actions.jsp" />
 	</c:when>
 
-	<%-- Card view  - liferay-frontend doesnt have vertical card --%>
+	<%-- Card view  - liferay-frontend doesnt have vertical card anymore --%>
 
 	<%-- Table view --%>
 
@@ -68,6 +77,11 @@
 			name="create-date"
 			property="createDate"
 		/>
+
+		<%-- Workflow status --%>
+         <liferay-ui:search-container-column-status
+         name="status"
+         />
 
 		<liferay-ui:search-container-column-jsp
 			name="actions"

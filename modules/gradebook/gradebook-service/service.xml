@@ -48,6 +48,7 @@
 		<!-- Reference to Group entity service -->
 
 		<reference entity="Group" package-path="com.liferay.portal"></reference>
+		<reference entity="WorkflowInstanceLink" package-path="com.liferay.portal" />
 
 		<!-- Entity services needed for the integration to Asset framework -->
 

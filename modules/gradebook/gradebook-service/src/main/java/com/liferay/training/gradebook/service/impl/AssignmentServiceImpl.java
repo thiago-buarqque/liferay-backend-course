@@ -113,16 +113,16 @@ public class AssignmentServiceImpl extends AssignmentServiceBaseImpl {
 
 	public List<Assignment> getAssignmentsByKeywords(
 			long groupId, String keywords, int start, int end,
-			OrderByComparator<Assignment> orderByComparator) {
+			OrderByComparator<Assignment> orderByComparator, int status) {
 
 		return assignmentLocalService.getAssignmentsByKeywords(
-				groupId, keywords, start, end, orderByComparator);
+				groupId, keywords, start, end, orderByComparator, status);
 	}
-
-	public long getAssignmentsCountByKeywords(long groupId, String keywords) {
+	public long getAssignmentsCountByKeywords(
+			long groupId, String keywords, int status) {
 
 		return assignmentLocalService.getAssignmentsCountByKeywords(
-				groupId, keywords);
+				groupId, keywords, status);
 	}
 
 	public Assignment updateAssignment(

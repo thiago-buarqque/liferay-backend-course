@@ -12,11 +12,13 @@
  * details.
  */
 package com.liferay.training.gradebook.service.impl;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.dao.orm.Disjunction;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.ResourceConstants;
 import com.liferay.portal.kernel.model.User;
@@ -24,13 +26,17 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
+import com.liferay.portal.kernel.workflow.WorkflowHandlerRegistryUtil;
 import com.liferay.training.gradebook.model.Assignment;
 import com.liferay.training.gradebook.model.*;
 import com.liferay.training.gradebook.service.base.AssignmentLocalServiceBaseImpl;
 import com.liferay.training.gradebook.validator.AssignmentValidator;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -97,6 +103,12 @@ public class AssignmentLocalServiceImpl extends AssignmentLocalServiceBaseImpl {
 		assignment.setUserId(userId);
 		assignment.setUserName(user.getScreenName());
 
+		// Set Status fields.
+		assignment.setStatus(WorkflowConstants.STATUS_DRAFT);
+		assignment.setStatusByUserId(userId);
+		assignment.setStatusByUserName(user.getFullName());
+		assignment.setStatusDate(serviceContext.getModifiedDate(null));
+
 		// Persist assignment to database.
 
 		assignment = super.addAssignment(assignment);
@@ -114,7 +126,8 @@ public class AssignmentLocalServiceImpl extends AssignmentLocalServiceBaseImpl {
 
 		// Update asset resources.
 		updateAsset(assignment, serviceContext);
-		return assignment;
+
+		return startWorkflowInstance(userId, assignment, serviceContext);
 	}
 
 	public Assignment updateAssignment(
@@ -156,7 +169,35 @@ public class AssignmentLocalServiceImpl extends AssignmentLocalServiceBaseImpl {
 		assetEntryLocalService.deleteEntry(
 				Assignment.class.getName(), assignment.getAssignmentId());
 
+		// Delete the workflow resource.
+		workflowInstanceLinkLocalService.deleteWorkflowInstanceLinks(
+				assignment.getCompanyId(), assignment.getGroupId(),
+				Assignment.class.getName(), assignment.getAssignmentId());
+
 		return super.deleteAssignment(assignment);
+	}
+
+	public Assignment updateStatus(
+			long userId, long assignmentId, int status,
+			ServiceContext serviceContext)
+			throws PortalException, SystemException {
+
+		User user = userLocalService.getUser(userId);
+
+		Assignment assignment = getAssignment(assignmentId);
+
+		assignment.setStatus(status);
+		assignment.setStatusByUserId(userId);
+		assignment.setStatusByUserName(user.getFullName());
+		assignment.setStatusDate(new Date());
+
+		assignmentPersistence.update(assignment);
+
+		assetEntryLocalService.updateVisible(
+				Assignment.class.getName(), assignmentId,
+				status == WorkflowConstants.STATUS_APPROVED);
+
+		return assignment;
 	}
 
 	public List<Assignment> getAssignmentsByGroupId(long groupId) {
@@ -171,14 +212,31 @@ public class AssignmentLocalServiceImpl extends AssignmentLocalServiceBaseImpl {
 	}
 	public List<Assignment> getAssignmentsByKeywords(
 			long groupId, String keywords, int start, int end,
-			OrderByComparator<Assignment> orderByComparator) {
+			OrderByComparator<Assignment> orderByComparator, int status) {
+
+		DynamicQuery assignmentQuery =
+				getKeywordSearchDynamicQuery(groupId, keywords);
+
+		if (status != WorkflowConstants.STATUS_ANY) {
+			assignmentQuery.add(
+					RestrictionsFactoryUtil.eq("status", status));
+		}
+
 		return assignmentLocalService.dynamicQuery(
-				getKeywordSearchDynamicQuery(groupId, keywords), start, end,
-				orderByComparator);
+				assignmentQuery, start, end, orderByComparator);
 	}
-	public long getAssignmentsCountByKeywords(long groupId, String keywords) {
-		return assignmentLocalService.dynamicQueryCount(
-				getKeywordSearchDynamicQuery(groupId, keywords));
+	public long getAssignmentsCountByKeywords(
+			long groupId, String keywords, int status) {
+
+		DynamicQuery assignmentQuery =
+				getKeywordSearchDynamicQuery(groupId, keywords);
+
+		if (status != WorkflowConstants.STATUS_ANY) {
+			assignmentQuery.add(
+					RestrictionsFactoryUtil.eq("status", status));
+		}
+
+		return assignmentLocalService.dynamicQueryCount(assignmentQuery);
 	}
 	private DynamicQuery getKeywordSearchDynamicQuery(
 			long groupId, String keywords) {
@@ -218,10 +276,39 @@ public class AssignmentLocalServiceImpl extends AssignmentLocalServiceBaseImpl {
 	public Assignment addAssignment(Assignment assignment) {
 		throw new UnsupportedOperationException("Not supported.");
 	}
+
 	@Override
 	public Assignment updateAssignment(Assignment assignment) {
 		throw new UnsupportedOperationException("Not supported.");
 	}
+
+	protected Assignment startWorkflowInstance(
+			long userId, Assignment assignment, ServiceContext serviceContext)
+			throws PortalException {
+
+		Map<String, Serializable> workflowContext = new HashMap();
+
+		String userPortraitURL = StringPool.BLANK;
+		String userURL = StringPool.BLANK;
+
+		if (serviceContext.getThemeDisplay() != null) {
+			User user = userLocalService.getUser(userId);
+
+			userPortraitURL =
+					user.getPortraitURL(serviceContext.getThemeDisplay());
+			userURL = user.getDisplayURL(serviceContext.getThemeDisplay());
+		}
+
+		workflowContext.put(
+				WorkflowConstants.CONTEXT_USER_PORTRAIT_URL, userPortraitURL);
+		workflowContext.put(WorkflowConstants.CONTEXT_USER_URL, userURL);
+
+		return WorkflowHandlerRegistryUtil.startWorkflowInstance(
+				assignment.getCompanyId(), assignment.getGroupId(), userId,
+				Assignment.class.getName(), assignment.getAssignmentId(),
+				assignment, serviceContext, workflowContext);
+	}
+
 	@Reference
 	AssignmentValidator _assignmentValidator;
 }

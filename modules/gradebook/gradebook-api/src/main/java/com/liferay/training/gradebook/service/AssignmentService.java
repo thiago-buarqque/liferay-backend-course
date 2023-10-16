@@ -74,10 +74,11 @@ public interface AssignmentService extends BaseService {
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<Assignment> getAssignmentsByKeywords(
 		long groupId, String keywords, int start, int end,
-		OrderByComparator<Assignment> orderByComparator);
+		OrderByComparator<Assignment> orderByComparator, int status);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public long getAssignmentsCountByKeywords(long groupId, String keywords);
+	public long getAssignmentsCountByKeywords(
+		long groupId, String keywords, int status);
 
 	/**
 	 * Returns the OSGi service identifier.

@@ -13,5 +13,5 @@
 </aui:a>
 
 <div class="autofit-col autofit-col-expand">
-	<%= HtmlUtil.escape(assignment.getDescription()) %>
+	<%= HtmlUtil.escape(assignment.getDescription(locale)) %>
 </div>

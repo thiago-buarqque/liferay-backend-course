@@ -75,16 +75,19 @@ public class AssignmentServiceWrapper
 			long groupId, String keywords, int start, int end,
 			com.liferay.portal.kernel.util.OrderByComparator
 				<com.liferay.training.gradebook.model.Assignment>
-					orderByComparator) {
+					orderByComparator,
+			int status) {
 
 		return _assignmentService.getAssignmentsByKeywords(
-			groupId, keywords, start, end, orderByComparator);
+			groupId, keywords, start, end, orderByComparator, status);
 	}
 
 	@Override
-	public long getAssignmentsCountByKeywords(long groupId, String keywords) {
+	public long getAssignmentsCountByKeywords(
+		long groupId, String keywords, int status) {
+
 		return _assignmentService.getAssignmentsCountByKeywords(
-			groupId, keywords);
+			groupId, keywords, status);
 	}
 
 	/**
